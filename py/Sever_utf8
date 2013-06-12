@@ -1,0 +1,35 @@
+#coding:utf-8
+#FileName : LotteryServer
+import socket
+import pymongo
+import time
+import datetime
+
+
+class LotterySever:
+    '''Lottery Class'''
+    boundTime = time.time()+30
+    exist = True
+
+    def __init__(self, dbhost='localhost', port='27017'):
+        #db = pymongo.MongoClient(dbhost, port).test
+        pass
+
+    def start(self):
+
+        server = socket.socket()
+        server.bind(("localhost", 10000))
+        server.listen(100)
+        #conStr = bytes((u'恭喜中奖').encode('utf-8'))
+        #thksStr = bytes((u'谢谢参与').encode('utf-8'))
+        print "server is open on 10000"
+        while True:
+            client, addr = server.accept()
+            if time.time() >= self.boundTime and self.exist is True:
+                client.send('1')
+                self.exist = False
+            else:
+                client.send('0')
+
+server = LotterySever()
+server.start()
