@@ -18,9 +18,9 @@ class LotteryClient:
             return 0
         #s.shutdown(socket.SHUT_RDWR)
 
-
-while True:
-    client = LotteryClient()
-    if client.getResult() == '1':
-        print 'success'
-        break
+if __name__ == '__main__':
+    while True:
+        client = LotteryClient()
+        if client.getResult() == '1':
+            print 'success'
+            break

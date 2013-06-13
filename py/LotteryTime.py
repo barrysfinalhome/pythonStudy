@@ -12,9 +12,15 @@ timeEndBound = 24
 timeEndBound = timeEndBound - 0.1 * (timeEndBound - timeStartBound)  # 提前截至时间 预留足够时间产生大奖
 
 nowDate = time.mktime(datetime.date.today().timetuple())
-lotteryTime = nowDate + random.randint(timeStartBound * hourSecond, timeEndBound * hourSecond)
+#create random time
+#lotteryTime = nowDate + random.randint(timeStartBound * hourSecond, timeEndBound * hourSecond)
+#create test time
+lotteryTime = time.time()+ 30
 db = pymongo.MongoClient('localhost', 27017).test
-db.lottery.insert({
-    'level': 1,
-    'time': str(lotteryTime),
-    'exist': '1'})
+while lotteryTime <= nowDate+daySecond:
+    lotteryTime += 30
+    db.lottery.insert({
+        'level': 1,
+        'timestamp': lotteryTime,
+        #'time': datetime.fromtimestamp(lotteryTime),
+        'exist': '1'})
