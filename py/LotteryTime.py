@@ -22,5 +22,5 @@ while lotteryTime <= nowDate+daySecond:
     db.lottery.insert({
         'level': 1,
         'timestamp': lotteryTime,
-        #'time': datetime.fromtimestamp(lotteryTime),
+        'time': datetime.date.fromtimestamp(lotteryTime),
         'exist': '1'})

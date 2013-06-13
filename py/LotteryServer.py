@@ -25,13 +25,13 @@ class LotterySever:
     def start(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(("localhost", 10000))
-        server.listen(10)
+        server.listen(10)  # set the max number of connctions
         print "server is open on 10000"
         for lotteryTime in self.lotteryTimes:
             print lotteryTime
             while True:
                 client, addr = server.accept()
-                #time.sleep(1)
+                ##time.sleep(1)
                 if time.time() >= lotteryTime['timestamp']:
                     client.send('1')
                     self.db.lottery.update(
