@@ -10,10 +10,18 @@ class LotterySever:
     exist = True
     db = None
 
-    def __init__(self, dbhost='localhost', port=27017):
-        self.db = pymongo.MongoClient(dbhost, port).test
-        self.lotteryTimes = self.db.lottery.find({'timestamp': {'$gte': time.time(), '$lte': time.time()+24*60*60}, 'exist': '1'}, sort=[('time', 1)])
+    def __init__(self, dbhost='localhost', port=27017, dbname='test'):
+        self.db = pymongo.connection.Connection(host=dbhost, port=port)[dbname]
+        self.lotteryTimes = self.db.lottery.find(
+            {'timestamp':
+                {'$gte': time.time(),
+                 '$lte': time.time()+24*60*60
+                 },
+             'exist': '1'
+             },
+            sort=[('time', 1)])
 
+    #start server
     def start(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(("localhost", 10000))
@@ -23,10 +31,12 @@ class LotterySever:
             print lotteryTime
             while True:
                 client, addr = server.accept()
-                time.sleep(1)
+                #time.sleep(1)
                 if time.time() >= lotteryTime['timestamp']:
                     client.send('1')
-                    self.db.lottery.update({'_id': lotteryTime['_id']}, {'$set': {'exist': 0}})
+                    self.db.lottery.update(
+                        {'_id': lotteryTime['_id']},
+                        {'$set': {'exist': 0}})
                     break
                 else:
                     client.send('0')

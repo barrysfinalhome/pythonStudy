@@ -2,7 +2,7 @@
 #FileName:LotteryTime
 import time
 import datetime
-import random
+#import random
 import pymongo
 daySecond = 24*60*60  # 一天的秒
 hourSecond = 60*60  # 一小时的秒
@@ -15,7 +15,7 @@ nowDate = time.mktime(datetime.date.today().timetuple())
 #create random time
 #lotteryTime = nowDate + random.randint(timeStartBound * hourSecond, timeEndBound * hourSecond)
 #create test time
-lotteryTime = time.time()+ 30
+lotteryTime = time.time() + 30
 db = pymongo.MongoClient('localhost', 27017).test
 while lotteryTime <= nowDate+daySecond:
     lotteryTime += 30

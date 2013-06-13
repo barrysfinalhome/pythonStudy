@@ -1,5 +1,6 @@
 import socket
 import traceback
+import time
 
 
 class LotteryClient:
@@ -8,6 +9,7 @@ class LotteryClient:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect(address)
+            time.sleep(2)
             s.settimeout(5)
             data = s.recv(2)
             s.close()
