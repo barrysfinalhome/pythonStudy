@@ -6,23 +6,20 @@ import time
 class LotteryClient:
     def getResult(self):
         address = ('localhost', 10000)
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect(address)
-            time.sleep(2)
-            s.settimeout(5)
-            data = s.recv(2)
-            s.close()
-            print data
-            return data
-        except:
-            print traceback.format_exc()
-            return 0
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(address)
+        s.settimeout(5)
+        data = s.recv(2)
+        s.shutdown(socket.SHUT_RDWR)
+        s.close()
+        print data
+        return data
+       
         #s.shutdown(socket.SHUT_RDWR)
 
 if __name__ == '__main__':
     while True:
         client = LotteryClient()
         if client.getResult() == '1':
-            print 'success'
-            break
+            print 'success'            

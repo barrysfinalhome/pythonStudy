@@ -15,7 +15,7 @@ class LotterySever:
         self.lotteryTimes = self.db.lottery.find(
             {'timestamp':
                 {'$gte': time.time(),
-                 '$lte': time.time()+24*60*60
+                 '$lte': time.time() + 24*60*60
                  },
              'exist': '1'
              },
@@ -27,16 +27,25 @@ class LotterySever:
         server.bind(("localhost", 10000))
         server.listen(10)  # set the max number of connctions
         print "server is open on 10000"
-        for lotteryTime in self.lotteryTimes:
-            print lotteryTime
+        for lottery_time in self.lotteryTimes:
+            print lottery_time
             while True:
                 client, addr = server.accept()
-                ##time.sleep(1)
-                if time.time() >= lotteryTime['timestamp']:
-                    client.send('1')
-                    self.db.lottery.update(
-                        {'_id': lotteryTime['_id']},
-                        {'$set': {'exist': 0}})
+                if time.time() >= lottery_time['timestamp']:
+                    this_id = lottery_time['_id']
+                    if self.db.lottery.find(
+                        {'_id': this_id,
+                         'exist': 1
+                         }):    # check if the award is exist
+                        self.db.lottery.update(
+                            {'_id': this_id},
+                            {'$inc': {'exist': -1}})
+                        if self.db.lottery.find(
+                                {'_id': this_id,
+                                 'exist': 1
+                                 }):
+                            client.send('0')
+                        client.send('1')
                     break
                 else:
                     client.send('0')
