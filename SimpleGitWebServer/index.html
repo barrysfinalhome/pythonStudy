@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+    <style>
+      .console {
+        background-color: black;
+        color: white;
+      }
+    </style>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  </head>
+  <body>
+    <div id="body">
+      <div style="display:flex">
+        <el-select
+          v-model="selectedBranch" filterable
+          placeholder="请选择分支名"
+          style="flex:1"
+        >
+          <el-option
+            v-for="branch in branches"
+            :lable="branch"
+            :value="branch"
+          >
+        </el-option>
+        </el-select>
+        <el-button
+          type="primary"
+          :loading="actionLoading"
+          v-on:click="actionCheckout"
+        >切换</el-button>
+      </div>
+      <div class="console">
+        <p v-for="(line, index) in consoleOutputs">
+          {{ consoleOutputs[index] }}
+        </p>
+      </div>
+    </div>
+    <script>
+      var data = {
+        branches: [],
+        selectedBranch: '',
+        actionLoading: false,
+        consoleOutputs: [],
+      };
+      new Vue({
+        el: '#body',
+        data: data,
+        created: function() {
+          var ws = new WebSocket('ws://' + window.location.host + '/console');
+          ws.onmessage = (function(data) {
+            if (!(data.data === '11111')) {
+              this.consoleOutputs.push(data.data);
+            }
+          }).bind(this);
+        },
+        methods: {
+          actionCheckout: function() {
+            if (!this.selectedBranch) {
+              this.$message({
+                message: '请先选择分支',
+                type: 'error',
+              });
+            }
+            this.actionLoading = true;
+            fetch('/branch/' + this.selectedBranch.replace(/\*/g, '').trim())
+              .then(function(response) {
+                return response.text()
+              }).then((function(responseText) {
+                this.actionLoading = false;
+                this.$message({
+                  message: responseText,
+                });
+              }).bind(this));
+          }
+        }
+      });
+      fetch('/branches').then(function(response){
+        return response.json();
+      }).then(function(branches){
+        data.branches = branches;
+      });
+    </script>
+  </body>
+<html>
